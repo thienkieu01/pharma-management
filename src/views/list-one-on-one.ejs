@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Danh sách khách hàng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #eef2f5, #e3f0ff);
+      min-height: 100vh;
+      margin-left: 80px;
+    }
+
+    /* ==== SIDEBAR ==== */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+      z-index: 1000;
+    }
+
+    .sidebar-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #032F54, #0a5082);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 20px rgba(3, 47, 84, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 28px rgba(3, 47, 84, 0.3);
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    .menu-item {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      color: #64748b;
+      font-size: 22px;
+    }
+
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      width: 4px;
+      height: 0;
+      background: #032F54;
+      border-radius: 0 4px 4px 0;
+      transition: height 0.3s ease;
+    }
+
+    .menu-item:hover {
+      background: rgba(3, 47, 84, 0.08);
+      color: #032F54;
+      transform: translateX(2px);
+    }
+
+    .menu-item.active {
+      background: #032F54;
+      color: white;
+      box-shadow: 0 8px 20px rgba(3, 47, 84, 0.25);
+    }
+
+    .menu-item.active::before {
+      height: 24px;
+    }
+
+    .menu-item::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 72px;
+      background: rgba(30, 41, 59, 0.95);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    .menu-item:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .menu-divider {
+      width: 32px;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.08);
+      margin: 8px 0;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 16px;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #032F54, #0a5082);
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title h1 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .btn-home {
+      background: white;
+      color: #032F54;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-home:hover {
+      background: #f0f0f0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+    }
+
+    /* Nội dung */
+    .main-content { padding: 40px 20px; display: flex; justify-content: center; }
+    .table-container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+      max-width: 1300px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 25px 30px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .table-header h2 { color: #032F54; font-size: 24px; font-weight: 700; }
+
+    table {
+      width: 100%;
+      border-collapse: separate !important;
+      border-spacing: 0;
+    }
+    th {
+      background: #032F54;
+      color: white;
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #eee;
+    }
+    tr:hover { background: #f8fbff; }
+    tr:last-child td { border-bottom: none; }
+
+    /* Nút thao tác */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 7px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-edit {
+      background: #ffc107;
+      color: #000;
+    }
+    .btn-edit:hover { 
+      background: #e0a800;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-delete:hover { 
+      background: #c82333;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 50px;
+      color: #888;
+      font-size: 16px;
+    }
+    .gender-male { color: #007bff; font-weight: 500; }
+    .gender-female { color: #e91e63; font-weight: 500; }
+
+    /* Search form */
+    .search-container {
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px 30px 10px;
+      gap: 10px;
+    }
+    .search-container input {
+      padding: 10px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      width: 280px;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .search-container input:focus {
+      outline: none;
+      border-color: #032F54;
+      box-shadow: 0 0 0 3px rgba(3, 47, 84, 0.1);
+    }
+    .btn-search {
+      padding: 10px 20px;
+      background: #032F54;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .btn-search:hover {
+      background: #021e35;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(3, 47, 84, 0.3);
+    }
+    .btn-clear {
+      padding: 10px 16px;
+      background: #e3e3e3;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .btn-clear:hover {
+      background: #d0d0d0;
+      transform: translateY(-2px);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 0;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+      animation: slideDown 0.3s;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      background: linear-gradient(135deg, #032F54, #0a5082);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 16px 16px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-size: 20px;
+      margin: 0;
+    }
+    .close {
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .close:hover {
+      transform: rotate(90deg);
+    }
+    .modal-body {
+      padding: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #032F54;
+      box-shadow: 0 0 0 3px rgba(3, 47, 84, 0.1);
+    }
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+    .btn-modal {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    .btn-cancel {
+      background: #6c757d;
+      color: white;
+    }
+    .btn-cancel:hover {
+      background: #545b62;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Alert */
+    .alert {
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideInAlert 0.3s;
+    }
+    @keyframes slideInAlert {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border-color: #28a745;
+    }
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border-color: #dc3545;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body { margin-left: 70px; }
+      .sidebar { width: 70px; padding: 20px 0; }
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      table { font-size: 12px; }
+      th, td { padding: 10px 8px; }
+      .action-buttons { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">🏥</div>
+
+    <div class="menu">
+      <a href="/" class="menu-item" data-tooltip="Dashboard">
+        <span>🏠</span>
+      </a>
+      <a href="/customer/form" class="menu-item" data-tooltip="Tạo tài khoản">
+        <span>👤</span>
+      </a>
+      <a href="/customer/list" class="menu-item active" data-tooltip="Danh sách khách hàng">
+        <span>📋</span>
+      </a>
+      <a href="/customer/list-sp" class="menu-item" data-tooltip="Lịch sử điểm">
+        <span>📊</span>
+      </a>
+      <a href="/customer/revenue" class="menu-item" data-tooltip="Doanh thu bán hàng">
+        <span>💰</span>
+      </a>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="menu-divider"></div>
+      <a href="#" class="menu-item" data-tooltip="Cài đặt">
+        <span>⚙️</span>
+      </a>
+      <a href="#" class="menu-item" data-tooltip="Trợ giúp">
+        <span>❓</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1>📋 Danh sách khách hàng</h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bảng danh sách -->
+  <div class="main-content">
+    <div class="table-container">
+      <div class="table-header">
+        <h2>Danh sách khách hàng</h2>
+      </div>
+
+      <!-- FORM TÌM KIẾM -->
+      <div class="search-container">
+        <form method="GET" action="/customer/list-one-on-one" style="display: flex; gap: 10px;">
+          <% if (search) { %>
+            <a href="/customer/list-one-on-one" class="btn-clear">Xoá lọc</a>
+          <% } %>
+
+          <input 
+            type="text" 
+            name="search" 
+            placeholder="🔍 Tìm số điện thoại..."
+            value="<%= search || '' %>"
+          >
+
+          <button type="submit" class="btn-search">Tìm kiếm</button>
+        </form>
+      </div>
+
+      <!-- Thông báo -->
+      <div id="alertContainer" style="padding: 0 30px;"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px;">
+              <a href="?sort=CustomerID&order=<%= order === 'ASC' ? 'DESC' : 'ASC' %>" 
+                 style="text-decoration: none; color: inherit;">
+                ID
+              </a>
+            </th>
+            <th>Họ tên</th>
+            <th>Email</th>
+            <th>Số điện thoại</th>
+            <th style="width: 100px;">Giới tính</th>
+            <th style="width: 130px;">Ngày sinh</th>
+            <th style="width: 160px; text-align:center;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (customers && customers.length > 0) { %>
+            <% customers.forEach(c => { %>
+              <tr>
+                <td><strong><%= c.CustomerID %></strong></td>
+                <td><%= c.FullName %></td>
+                <td><%= c.Email || '-' %></td>
+                <td><%= c.Phone || '-' %></td>
+                <td>
+                  <% if (c.Gender === 'Nam' || c.Gender === 'Male') { %>
+                    <span class="gender-male">Nam</span>
+                  <% } else if (c.Gender === 'Nữ' || c.Gender === 'Female') { %>
+                    <span class="gender-female">Nữ</span>
+                  <% } else { %>
+                    <%= c.Gender || '-' %>
+                  <% } %>
+                </td>
+                <td>
+                  <% if (c.Birthdate) { 
+                    const bd = new Date(c.Birthdate);
+                    const day = bd.getDate().toString().padStart(2, '0');
+                    const month = (bd.getMonth() + 1).toString().padStart(2, '0');
+                    const year = bd.getFullYear();
+                  %>
+                    <%= `${day}/${month}/${year}` %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button 
+                      data-id="<%= c.CustomerID %>"
+                      data-name="<%= c.FullName %>"
+                      data-birthdate="<%= c.Birthdate ? c.Birthdate.toISOString().split('T')[0] : '' %>"
+                      data-email="<%= c.Email || '' %>"
+                      data-phone="<%= c.Phone || '' %>"
+                      data-gender="<%= c.Gender || '' %>"
+                      onclick="openEditModalFromData(this)"
+                      class="btn btn-edit">✏️ Sửa</button>
+
+                    <button 
+                      data-id="<%= c.CustomerID %>"
+                      data-name="<%= c.FullName %>"
+                      onclick="deleteCustomerFromData(this)"
+                      class="btn btn-delete">🗑️ Xóa</button>
+                  </div>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="7" class="no-data">
+                Chưa có dữ liệu khách hàng.
+              </td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Sửa khách hàng -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✏️ Chỉnh sửa khách hàng</h2>
+        <span class="close" onclick="closeEditModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" onsubmit="updateCustomer(event)">
+          <input type="hidden" id="editCustomerID" name="CustomerID">
+          
+          <div class="form-group">
+            <label>Họ và tên <span style="color: #dc3545;">*</span></label>
+            <input type="text" id="editFullName" name="FullName" required>
+          </div>
+
+          <div class="form-group">
+            <label>Ngày sinh</label>
+            <input type="date" id="editBirthdate" name="Birthdate">
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="editEmail" name="Email">
+          </div>
+
+          <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="tel" id="editPhone" name="Phone" pattern="[0-9]{10,11}">
+          </div>
+
+          <div class="form-group">
+            <label>Giới tính</label>
+            <select id="editGender" name="Gender">
+              <option value="">-- Chọn giới tính --</option>
+              <option value="Nam">👨 Nam</option>
+              <option value="Nữ">👩 Nữ</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-modal btn-success">💾 Lưu thay đổi</button>
+            <button type="button" onclick="closeEditModal()" class="btn-modal btn-cancel">✖ Hủy</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Hiển thị thông báo từ URL query params (nếu có)
+    window.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const success = urlParams.get('success');
+      const error = urlParams.get('error');
+      
+      if (success) {
+        showAlert(decodeURIComponent(success), 'success');
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      if (error) {
+        showAlert(decodeURIComponent(error), 'error');
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    });
+
+    function openEditModalFromData(button) {
+      const id = button.getAttribute('data-id');
+      const fullName = button.getAttribute('data-name');
+      const birthdate = button.getAttribute('data-birthdate');
+      const email = button.getAttribute('data-email');
+      const phone = button.getAttribute('data-phone');
+      const gender = button.getAttribute('data-gender');
+      
+      document.getElementById('editCustomerID').value = id;
+      document.getElementById('editFullName').value = fullName;
+      document.getElementById('editBirthdate').value = birthdate;
+      document.getElementById('editEmail').value = email;
+      document.getElementById('editPhone').value = phone;
+      document.getElementById('editGender').value = gender;
+      
+      document.getElementById('editModal').style.display = 'block';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('editModal');
+      if (event.target == modal) {
+        closeEditModal();
+      }
+    }
+
+    async function updateCustomer(event) {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData);
+
+      try {
+        const response = await fetch('/customer/update', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: new URLSearchParams(data)
+        });
+
+        const text = await response.text();
+        let payload = null;
+        
+        try {
+          payload = JSON.parse(text);
+        } catch (err) {
+          if (text && text.trim().startsWith('<')) {
+            try {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(text, 'text/html');
+              const bodyText = (doc.body && doc.body.textContent) ? doc.body.textContent.trim() : null;
+              const showMsg = bodyText ? bodyText : 'Server trả HTML (không phải JSON).';
+              showAlert(showMsg, 'error');
+              return;
+            } catch (e) {
+              showAlert('Server trả HTML không thể đọc được.', 'error');
+              return;
+            }
+          } else {
+            showAlert('Phản hồi từ server không phải JSON: ' + text, 'error');
+            return;
+          }
+        }
+
+        if (payload) {
+          if (payload.success) {
+            showAlert(payload.message || 'Cập nhật thành công!', 'success');
+            closeEditModal();
+            setTimeout(() => location.reload(), 1000);
+          } else {
+            showAlert(payload.message || 'Có lỗi xảy ra khi cập nhật', 'error');
+          }
+        } else {
+          showAlert('Không nhận được dữ liệu hợp lệ từ server.', 'error');
+        }
+      } catch (error) {
+        showAlert('Có lỗi xảy ra: ' + error.message, 'error');
+      }
+    }
+
+    async function deleteCustomerFromData(button) {
+      const id = button.getAttribute('data-id');
+      const name = button.getAttribute('data-name');
+      
+      if (!confirm(`Bạn có chắc chắn muốn xóa khách hàng "${name}" (ID: ${id})?`)) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/customer/delete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ CustomerID: id })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          showAlert(result.message, 'success');
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          showAlert(result.message || 'Có lỗi xảy ra khi xóa khách hàng', 'error');
+        }
+      } catch (error) {
+        showAlert('Có lỗi xảy ra: ' + error.message, 'error');
+      }
+    }
+
+    function showAlert(message, type) {
+      const alertContainer = document.getElementById('alertContainer');
+      const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+      const icon = type === 'success' ? '✅' : '❌';
+      
+      alertContainer.innerHTML = `
+        <div class="alert ${alertClass}">
+          <span style="font-size: 20px;">${icon}</span>
+          <span>${message}</span>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const alert = alertContainer.querySelector('.alert');
+        if (alert) {
+          alert.style.transition = 'all 0.3s ease';
+          alert.style.opacity = '0';
+          alert.style.transform = 'translateY(-10px)';
+          setTimeout(() => {
+            alertContainer.innerHTML = '';
+          }, 300);
+        }
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>

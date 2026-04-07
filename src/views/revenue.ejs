@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doanh thu bán hàng - Nhà thuốc Vĩnh Hằng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #032F54, #032F54);
+      min-height: 100vh;
+      padding: 30px 20px;
+      margin-left: 80px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ==== SIDEBAR ==== */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+      z-index: 1000;
+    }
+
+    .sidebar-logo {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #032F54, #0a5082);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 32px;
+      box-shadow: 0 8px 20px rgba(3, 47, 84, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-logo:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 28px rgba(3, 47, 84, 0.3);
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 0 16px;
+    }
+
+    .menu-item {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      color: #64748b;
+      font-size: 22px;
+    }
+
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      left: -16px;
+      width: 4px;
+      height: 0;
+      background: #032F54;
+      border-radius: 0 4px 4px 0;
+      transition: height 0.3s ease;
+    }
+
+    .menu-item:hover {
+      background: rgba(3, 47, 84, 0.08);
+      color: #032F54;
+      transform: translateX(2px);
+    }
+
+    .menu-item.active {
+      background: #032F54;
+      color: white;
+      box-shadow: 0 8px 20px rgba(3, 47, 84, 0.25);
+    }
+
+    .menu-item.active::before {
+      height: 24px;
+    }
+
+    .menu-item::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 72px;
+      background: rgba(30, 41, 59, 0.95);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-8px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+    }
+
+    .menu-item:hover::after {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .menu-divider {
+      width: 32px;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.08);
+      margin: 8px 0;
+    }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 16px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #032F54;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 25px;
+      transition: all 0.3s ease;
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .back-link:hover {
+      background: #f8f9fa;
+      transform: translateX(-4px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .header {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 50px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .header-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #032F54, #0a5082);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 8px 24px rgba(3,47,84,0.25);
+    }
+
+    .header-text h1 {
+      font-size: 32px;
+      font-weight: 800;
+      color: #032F54;
+      margin-bottom: 8px;
+    }
+
+    .header-text p {
+      color: #64748b;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      background: white;
+      border-radius: 20px;
+      padding: 35px 45px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .filter-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #032F54;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-title::before {
+      content: '🎯';
+      font-size: 22px;
+    }
+
+    .filter-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 20px;
+      align-items: end;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #475569;
+      margin-bottom: 10px;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      background: white;
+      transition: all 0.3s ease;
+      color: #1e293b;
+    }
+
+    .form-group select:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: #032F54;
+      box-shadow: 0 0 0 4px rgba(3,47,84,0.1);
+    }
+
+    .btn-submit {
+      padding: 14px 40px;
+      background: linear-gradient(135deg, #032F54, #0a5082);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(3,47,84,0.25);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(3,47,84,0.35);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 18px 24px;
+      border-radius: 14px;
+      margin-bottom: 25px;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      box-shadow: 0 4px 16px rgba(239,68,68,0.15);
+      border-left: 5px solid #ef4444;
+      color: #dc2626;
+    }
+
+    /* Revenue Cards */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .revenue-card {
+      background: white;
+      border-radius: 20px;
+      padding: 35px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .revenue-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .revenue-card.actual::before {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .revenue-card.potential::before {
+      background: linear-gradient(90deg, #3b82f6, #2563eb);
+    }
+
+    .revenue-card.lost::before {
+      background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+
+    .revenue-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+    }
+
+    .revenue-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    .revenue-card.actual .revenue-icon {
+      background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.15));
+    }
+
+    .revenue-card.potential .revenue-icon {
+      background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(37,99,235,0.15));
+    }
+
+    .revenue-card.lost .revenue-icon {
+      background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(220,38,38,0.15));
+    }
+
+    .revenue-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .revenue-value {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .revenue-value.green {
+      color: #10b981;
+    }
+
+    .revenue-value.blue {
+      color: #3b82f6;
+    }
+
+    .revenue-value.red {
+      color: #ef4444;
+    }
+
+    /* Chart Section */
+    .chart-section {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 50px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .chart-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #032F54;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chart-title::before {
+      content: '📊';
+      font-size: 24px;
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 350px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      gap: 60px;
+      padding: 30px 20px 20px;
+      border-radius: 14px;
+      background: linear-gradient(to top, #f8fafc, transparent);
+      position: relative;
+    }
+
+    .chart-container::after {
+      content: '';
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: #e2e8f0;
+    }
+
+    .chart-bar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 120px;
+      border-radius: 12px 12px 0 0;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+    }
+
+    .chart-bar:hover .bar {
+      transform: scale(1.05);
+      box-shadow: 0 -15px 40px rgba(0,0,0,0.15);
+    }
+
+    .bar-actual {
+      background: linear-gradient(180deg, #10b981, #059669);
+    }
+
+    .bar-potential {
+      background: linear-gradient(180deg, #3b82f6, #2563eb);
+    }
+
+    .bar-lost {
+      background: linear-gradient(180deg, #ef4444, #dc2626);
+    }
+
+    .bar-value {
+      font-size: 13px;
+      color: white;
+      font-weight: 700;
+      padding: 8px 14px;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 10px;
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .bar-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    }
+
+    .empty-state-icon {
+      font-size: 80px;
+      margin-bottom: 25px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .empty-state h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #032F54;
+      margin-bottom: 12px;
+    }
+
+    .empty-state p {
+      font-size: 16px;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .filter-form {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-submit {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+        margin-left: 70px;
+      }
+
+      .sidebar { width: 70px; padding: 20px 0; }
+
+      .header {
+        padding: 30px 25px;
+      }
+
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .header-text h1 {
+        font-size: 26px;
+      }
+
+      .filter-section,
+      .chart-section {
+        padding: 25px 20px;
+      }
+
+      .chart-container {
+        gap: 30px;
+        height: 300px;
+      }
+
+      .revenue-value {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">🏥</div>
+
+    <div class="menu">
+      <a href="/" class="menu-item" data-tooltip="Dashboard">
+        <span>🏠</span>
+      </a>
+      <a href="/customer/form" class="menu-item" data-tooltip="Tạo tài khoản">
+        <span>👤</span>
+      </a>
+      <a href="/customer/list" class="menu-item" data-tooltip="Danh sách khách hàng">
+        <span>📋</span>
+      </a>
+      <a href="/customer/list-sp" class="menu-item" data-tooltip="Lịch sử điểm">
+        <span>📊</span>
+      </a>
+      <a href="/customer/revenue" class="menu-item active" data-tooltip="Doanh thu bán hàng">
+        <span>💰</span>
+      </a>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="menu-divider"></div>
+      <a href="#" class="menu-item" data-tooltip="Cài đặt">
+        <span>⚙️</span>
+      </a>
+      <a href="#" class="menu-item" data-tooltip="Trợ giúp">
+        <span>❓</span>
+      </a>
+    </div>
+  </div>
+
+
+    <div class="header">
+      <div class="header-content">
+        <div class="header-icon">💰</div>
+        <div class="header-text">
+          <h1>Doanh thu bán hàng</h1>
+          <p>Theo dõi doanh thu thực tế và tiềm năng của nhà thuốc</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <div class="filter-title">Chọn tháng/năm</div>
+      <form class="filter-form" method="GET" action="/customer/revenue">
+        <div class="form-group">
+          <label>Tháng</label>
+          <select name="month" required>
+            <% for(let m = 1; m <= 12; m++) { %>
+              <option value="<%= m %>" <%= month == m ? 'selected' : '' %>>
+                Tháng <%= m %>
+              </option>
+            <% } %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Năm</label>
+          <input type="number" name="year" value="<%= year %>" min="2020" max="2030" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Xem báo cáo</button>
+      </form>
+    </div>
+
+    <!-- Error Alert -->
+    <% if (error) { %>
+      <div class="alert alert-error">
+        ⚠️ <%= error %>
+      </div>
+    <% } %>
+
+    <!-- Revenue Data -->
+    <% if (result) { %>
+      <div class="revenue-grid">
+        <div class="revenue-card actual">
+          <div class="revenue-icon">✅</div>
+          <div class="revenue-label">Doanh thu thực tế</div>
+          <div class="revenue-value green">
+            <%= result.actual.toLocaleString('vi-VN') %>đ
+          </div>
+        </div>
+
+        <div class="revenue-card potential">
+          <div class="revenue-icon">📈</div>
+          <div class="revenue-label">Doanh thu tiềm năng</div>
+          <div class="revenue-value blue">
+            <%= result.potential.toLocaleString('vi-VN') %>đ
+          </div>
+        </div>
+
+        <div class="revenue-card lost">
+          <div class="revenue-icon">📉</div>
+          <div class="revenue-label">Doanh thu bị mất</div>
+          <div class="revenue-value red">
+            <%= result.lost.toLocaleString('vi-VN') %>đ
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-section">
+        <div class="chart-title">Biểu đồ so sánh</div>
+        <div class="chart-container">
+          <% 
+            const maxValue = Math.max(result.actual, result.potential, result.lost);
+            const actualHeight = (result.actual / maxValue) * 280;
+            const potentialHeight = (result.potential / maxValue) * 280;
+            const lostHeight = (result.lost / maxValue) * 280;
+          %>
+
+          <div class="chart-bar">
+            <div class="bar bar-actual" data-height="<%= actualHeight %>">
+              <div class="bar-value"><%= result.actual.toLocaleString('vi-VN') %>đ</div>
+            </div>
+            <div class="bar-label">Thực tế</div>
+          </div>
+
+          <div class="chart-bar">
+            <div class="bar bar-potential" data-height="<%= potentialHeight %>">
+              <div class="bar-value"><%= result.potential.toLocaleString('vi-VN') %>đ</div>
+            </div>
+            <div class="bar-label">Tiềm năng</div>
+          </div>
+
+          <div class="chart-bar">
+            <div class="bar bar-lost" data-height="<%= lostHeight %>">
+              <div class="bar-value"><%= result.lost.toLocaleString('vi-VN') %>đ</div>
+            </div>
+            <div class="bar-label">Bị mất</div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.querySelectorAll('.bar[data-height]').forEach(bar => {
+          setTimeout(() => {
+            bar.style.height = bar.getAttribute('data-height') + 'px';
+          }, 100);
+        });
+      </script>
+    <% } else if (!error) { %>
+      <div class="empty-state">
+        <div class="empty-state-icon">📊</div>
+        <h3>Chọn tháng và năm để xem báo cáo</h3>
+        <p>Sử dụng bộ lọc bên trên để xem doanh thu theo tháng</p>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

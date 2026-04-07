@@ -1,0 +1,251 @@
+<style>
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #032F54;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* STATS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+  margin-bottom: 45px;
+}
+
+.stat-box {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.stat-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+  border-color: #032F54;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(3, 47, 84, 0.1), rgba(10, 80, 130, 0.1));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #032F54;
+}
+
+/* FEATURE CARDS */
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #032F54;
+  margin-bottom: 25px;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 28px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  text-decoration: none;
+  color: #032F54;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #032F54, #0a5082);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: #032F54;
+  box-shadow: 0 16px 40px rgba(3, 47, 84, 0.15);
+}
+
+.card-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.card-description {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.card.featured {
+  background: linear-gradient(135deg, #032F54 0%, #0a5082 100%);
+  color: white;
+}
+
+.card.featured .card-title {
+  color: white;
+}
+
+.card.featured .card-description {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.card.featured:hover {
+  border-color: transparent;
+  box-shadow: 0 20px 50px rgba(3, 47, 84, 0.3);
+}
+
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<div class="header">
+  <div>
+    <div class="title">Dashboard</div>
+    <div class="subtitle">Chào mừng trở lại! Xem tổng quan hoạt động hôm nay</div>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat-box">
+    <div class="stat-icon">👥</div>
+    <div class="stat-label">Tổng khách hàng</div>
+    <div class="stat-value">1,234</div>
+  </div>
+
+  <div class="stat-box">
+    <div class="stat-icon">💊</div>
+    <div class="stat-label">Sản phẩm</div>
+    <div class="stat-value">856</div>
+  </div>
+
+  <div class="stat-box">
+    <div class="stat-icon">📦</div>
+    <div class="stat-label">Đơn hàng</div>
+    <div class="stat-value">342</div>
+  </div>
+
+  <div class="stat-box">
+    <div class="stat-icon">💵</div>
+    <div class="stat-label">Doanh thu</div>
+    <div class="stat-value">125M</div>
+  </div>
+</div>
+
+<!-- Features -->
+<div class="section-title">Chức năng chính</div>
+<div class="card-grid">
+  <a href="/customer/list-all" class="card">
+    <span class="card-icon">📋</span>
+    <div class="card-title">Danh sách khách hàng</div>
+    <div class="card-description">
+      Xem và quản lý tất cả thông tin khách hàng trong hệ thống.
+    </div>
+  </a>
+
+  <a href="/customer/list-one-on-one" class="card">
+    <span class="card-icon">🔍</span>
+    <div class="card-title">Tìm kiếm khách hàng</div>
+    <div class="card-description">
+      Tìm kiếm và sắp xếp khách hàng theo nhiều tiêu chí khác nhau.
+    </div>
+  </a>
+
+  <a href="/customer/list" class="card">
+    <span class="card-icon">🎁</span>
+    <div class="card-title">Điểm tích lũy</div>
+    <div class="card-description">
+      Theo dõi điểm thưởng chi tiết của từng khách hàng.
+    </div>
+  </a>
+
+  <a href="/customer/loyal" class="card">
+    <span class="card-icon">⭐</span>
+    <div class="card-title">Khách hàng trung thành</div>
+    <div class="card-description">
+      Xem danh sách khách hàng có giá trị cao và trung thành.
+    </div>
+  </a>
+
+  <a href="/customer/revenue" class="card featured">
+    <span class="card-icon">📈</span>
+    <div class="card-title">Doanh thu bán hàng</div>
+    <div class="card-description">
+      Xem báo cáo doanh thu thực tế và tiềm năng theo tháng/năm.
+    </div>
+  </a>
+
+  <a href="#" class="card">
+    <span class="card-icon">📊</span>
+    <div class="card-title">Báo cáo thống kê</div>
+    <div class="card-description">
+      Phân tích dữ liệu bán hàng và xu hướng khách hàng.
+    </div>
+  </a>
+</div>

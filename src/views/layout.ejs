@@ -1,0 +1,193 @@
+<!-- views/partials/sidebar.ejs -->
+<style>
+/* ======================== SIDEBAR ======================== */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+  z-index: 1000;
+}
+
+.sidebar-logo {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #032F54, #0a5082);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 20px rgba(3, 47, 84, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar-logo:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 28px rgba(3, 47, 84, 0.3);
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.menu-item {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+  color: #64748b;
+  font-size: 22px;
+}
+
+.menu-item::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  width: 4px;
+  height: 0;
+  background: #032F54;
+  border-radius: 0 4px 4px 0;
+  transition: height 0.3s ease;
+}
+
+.menu-item:hover {
+  background: rgba(3, 47, 84, 0.08);
+  color: #032F54;
+  transform: translateX(2px);
+}
+
+.menu-item.active {
+  background: #032F54;
+  color: white;
+  box-shadow: 0 8px 20px rgba(3, 47, 84, 0.25);
+}
+
+.menu-item.active::before {
+  height: 24px;
+}
+
+/* Tooltip */
+.menu-item::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 72px;
+  background: rgba(30, 41, 59, 0.95);
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-8px);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.menu-item:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.menu-divider {
+  width: 32px;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 8px 0;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px;
+}
+
+/* Body margin for sidebar */
+body {
+  margin-left: 80px;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+  }
+  body {
+    margin-left: 70px;
+  }
+}
+</style>
+
+<!-- Sidebar HTML -->
+<div class="sidebar">
+  <div class="sidebar-logo">🏥</div>
+
+  <div class="menu">
+    <a href="/" class="menu-item <%= currentPage === 'home' ? 'active' : '' %>" data-tooltip="Dashboard">
+      <span>🏠</span>
+    </a>
+    <a href="/customer/form" class="menu-item <%= currentPage === 'form' ? 'active' : '' %>" data-tooltip="Tạo tài khoản">
+      <span>👤</span>
+    </a>
+    <a href="/customer/list" class="menu-item <%= currentPage === 'list' ? 'active' : '' %>" data-tooltip="Danh sách khách hàng">
+      <span>📋</span>
+    </a>
+    <a href="/customer/list-sp" class="menu-item <%= currentPage === 'list-sp' ? 'active' : '' %>" data-tooltip="Lịch sử điểm">
+      <span>📊</span>
+    </a>
+    <a href="/customer/revenue" class="menu-item <%= currentPage === 'revenue' ? 'active' : '' %>" data-tooltip="Doanh thu bán hàng">
+      <span>💰</span>
+    </a>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="menu-divider"></div>
+    <a href="#" class="menu-item" data-tooltip="Cài đặt">
+      <span>⚙️</span>
+    </a>
+    <a href="#" class="menu-item" data-tooltip="Trợ giúp">
+      <span>❓</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// Tự động active menu item dựa trên URL
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPath = window.location.pathname;
+  const menuItems = document.querySelectorAll('.menu-item');
+  
+  menuItems.forEach(item => {
+    const href = item.getAttribute('href');
+    if (href && currentPath === href) {
+      item.classList.add('active');
+    }
+  });
+});
+</script>
