@@ -208,21 +208,6 @@ This will fully recreate the database with all business logic.
 
 ---
 
-## 📂 Project Structure
-
-```bash
-pharma-management/
-├── database/
-│   ├── schema.sql
-│   ├── procedures.sql
-│   ├── triggers.sql
-│   └── seed.sql
-│
-├── README.md
-```
-
----
-
 ## 📈 Key Achievements
 
 * Designed a **complex relational database with inheritance**
